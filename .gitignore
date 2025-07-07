@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+build/
+install/
+log/
+
+
+# __pycache__/ – Python stores compiled versions of your code here. Not useful for sharing.
+
+# *.pyc – Binary Python files, auto-generated.
+
+# build/, install/, log/ – ROS 2 colcon build generates these. They are huge, system-specific, and should never be committed to GitHub.
