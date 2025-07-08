@@ -291,3 +291,106 @@ battery	            75.0%	             Fixed to simulate moderate charge
 time_elapsed	    0.0 → +1/s	         Tracks how long the rover’s been moving
 coordinates.x	    =  distance	         Keeps spatial logic simple
 
+
+
+
+
+
+
+Question 4: ROS 2 Clock System 🕒
+
+
+Task
+
+To implement a clock system using ROS 2.
+
+The system publishes time as HH:MM:SS on a topic /clock, using three counters:
+/second (increments every second)
+/minute (increments after 60 seconds)
+/hour (increments after 60 minutes)
+The full time (HH:MM:SS format) is published as a String on /clock.
+
+
+
+Files
+
+scripts/q4_clock_publisher.py : Implements a publisher node that simulates a live ticking clock by publishing: Integer counts on /second, /minute, and /hour
+A formatted clock string on /clock
+
+
+
+What We Did
+
+We created a single publisher node that simulates a clock:
+The node starts counting seconds from 0.
+Every 60 seconds, it resets seconds to 0 and increments the minute counter.
+Every 60 minutes, it resets minutes to 0 and increments the hour counter.
+
+After each tick, it publishes the current time in HH:MM:SS format on the /clock topic using String.
+
+It also publishes the raw values of /second, /minute, and /hour as Int32 messages.
+
+This mimics a real digital clock with independent second, minute, and hour hands — except in software.
+
+
+
+Code Explanation
+
+#!/usr/bin/env python3 : Shebang line — allows the script to be executed like a program
+
+from std_msgs.msg import Int32, String :
+Int32 is used for /second, /minute, and /hour counters
+String is used for formatted time string on /clock
+
+
+
+
+Node Setup:
+
+super().__init__('clock_publisher') : initializes a ROS 2 node with the name clock_publisher
+
+
+
+Publishers:
+
+self.second_pub = self.create_publisher(Int32, '/second', 10)
+self.minute_pub = self.create_publisher(Int32, '/minute', 10)
+self.hour_pub = self.create_publisher(Int32, '/hour', 10)
+self.clock_pub = self.create_publisher(String, '/clock', 10)
+
+Four publishers are created to send time data on their respective topics.
+
+
+
+Timer:
+
+self.timer = self.create_timer(1.0, self.timer_callback) : this sets a timer that calls timer_callback() every 1 second, simulating real-time ticking
+
+Time Logic:
+
+self.second += 1
+if self.second >= 60:
+    self.second = 0
+    self.minute += 1
+Every second, we increment the second counter.
+
+If seconds reach 60, reset it to 0 and increment the minute counter.
+
+Similarly, when minutes reach 60, increment hour.
+
+
+
+Clock Formatting:
+
+clock_msg.data = f'{self.hour:02d}:{self.minute:02d}:{self.second:02d}' : this creates a string like 04:05:09 with zero-padding
+
+
+
+Final Publishing:
+
+self.second_pub.publish(second_msg)
+self.minute_pub.publish(minute_msg)
+self.hour_pub.publish(hour_msg)
+self.clock_pub.publish(clock_msg)
+All four messages are published at once, every second.
+
