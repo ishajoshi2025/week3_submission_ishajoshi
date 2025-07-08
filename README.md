@@ -296,11 +296,10 @@ coordinates.x	    =  distance	         Keeps spatial logic simple
 
 
 
+##Question 4: ROS 2 Clock System
 
-Question 4: ROS 2 Clock System 🕒
 
-
-Task
+**Task**
 
 To implement a clock system using ROS 2.
 
@@ -312,14 +311,14 @@ The full time (HH:MM:SS format) is published as a String on /clock.
 
 
 
-Files
+##Files
 
 scripts/q4_clock_publisher.py : Implements a publisher node that simulates a live ticking clock by publishing: Integer counts on /second, /minute, and /hour
 A formatted clock string on /clock
 
 
 
-What We Did
+##What We Did
 
 We created a single publisher node that simulates a clock:
 The node starts counting seconds from 0.
@@ -334,7 +333,7 @@ This mimics a real digital clock with independent second, minute, and hour hands
 
 
 
-Code Explanation
+##Code Explanation
 
 #!/usr/bin/env python3 : Shebang line — allows the script to be executed like a program
 
