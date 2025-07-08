@@ -33,6 +33,7 @@ install(PROGRAMS
   scripts/q2_signal_1.py
   scripts/q2_signal_2.py
   scripts/q3_rover_status_publisher.py
+  scripts/q4_clock_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
