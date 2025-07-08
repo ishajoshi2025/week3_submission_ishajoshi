@@ -33,6 +33,7 @@ install(
 install(PROGRAMS
   scripts/q1_publisher.py
   scripts/q1_subscriber.py
+  scripts/q2_signal_1.py
+  scripts/q2_signal_2.py
   DESTINATION lib/${PROJECT_NAME}
 )
-
