@@ -1,16 +1,27 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd"
+            schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>kratos_isha</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="ishajoshi@todo.todo">ishajoshi</maintainer>
-  <license>TODO: License declaration</license>
-<exec_depend>rclpy</exec_depend>
-<exec_depend>std_msgs</exec_depend>
+  <description>Package for ROS 2 Week 3 assignment - signal logic and rover telemetry</description>
 
+  <maintainer email="ishajoshi@todo.todo">Isha Joshi</maintainer>
+  <license>MIT</license>
+
+  <!-- Build system -->
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
+  <!-- Build & Exec dependencies -->
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+
+  <!-- Group for message packages -->
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <!-- Testing -->
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

@@ -73,79 +73,221 @@ source install/setup.bash
 
 **Task**
 
-To create two ROS 2 nodes that mimic the behavior of two traffic signals (S1 and S2).
+> To create two ROS 2 nodes that mimic the behavior of two traffic signals (S1 and S2).
 
 Signal 1 (S1) must publish "green" on topic /s1 for 10 seconds, then "red" for 10 seconds, and then stop.
 
 Signal 2 (S2) should listen to /s1 and publish the opposite color on /s2.
 
-Files
-scripts/q2_signal_1.py
-Publishes "green" for 10 seconds, then "red" for 10 seconds, to topic /s1.
+## Files
 
-scripts/q2_signal_2.py
-Subscribes to /s1, and publishes "red" on /s2 while /s1 is "green", and "green" on /s2 when /s1 is "red".
+'scripts/q2_signal_1.py' Publishes "green" for 10 seconds, then "red" for 10 seconds, to topic /s1.
 
-What We Did
-Signal 1 Node:
-Created a publisher node that alternates signals:
+'scripts/q2_signal_2.py' Subscribes to /s1, and publishes "red" on /s2 while /s1 is "green", and "green" on /s2 when /s1 is "red".
 
-For the first 10 seconds, it publishes "green" every second.
 
-For the next 10 seconds, it publishes "red" every second.
+##What We Did
 
-After 20 seconds, it shuts itself down (to avoid infinite publishing).
 
-A counter keeps track of how many seconds have passed.
 
-Timer callback publish_signal() decides what to send based on the counter.
+##Signal 1 Node:
 
-This is like a timer-based signal controller that just flips after 10 seconds.
 
-Signal 2 Node:
-A subscriber node that listens to /s1.
+- Created a publisher node that alternates signals:
+- For the first 10 seconds, it publishes "green" every second.
+- For the next 10 seconds, it publishes "red" every second.
+- After 20 seconds, it shuts itself down (to avoid infinite publishing).
+- A counter keeps track of how many seconds have passed.
 
-It publishes the opposite signal on /s2:
+- Timer callback publish_signal() decides what to send based on the counter.
+- This is like a timer-based signal controller that just flips after 10 seconds.
 
-If it hears "green" on /s1, it publishes "red" on /s2.
 
-If it hears "red" on /s1, it publishes "green" on /s2.
+##Signal 2 Node:
 
-This is like a smart signal that listens to S1 and adjusts accordingly.
 
-Code Explanations
-#!/usr/bin/env python3 : Shebang line – allows the script to run as an executable.
+- A subscriber node that listens to /s1.
+- It publishes the opposite signal on /s2:
+- If it hears "green" on /s1, it publishes "red" on /s2.
+- If it hears "red" on /s1, it publishes "green" on /s2.
+- This is like a *smart signal* that listens to S1 and adjusts accordingly.
 
-rclpy and Node : ROS 2 base classes to define nodes and manage communication.
 
-String : Standard message type used to send simple text (like "green" and "red").
 
-q2_signal_1.py Specifics:
-self.create_timer(1.0, self.publish_signal)
-Tells the node to call publish_signal() every second.
+## Code Explanations
 
-self.counter
-Tracks the number of seconds passed.
+
+'#!/usr/bin/env python3' : Shebang line – allows the script to run as an executable.
+
+'rclpy and Node' : ROS 2 base classes to define nodes and manage communication.
+
+'String' : Standard message type used to send simple text (like "green" and "red").
+
+
+**'q2_signal_1.py' Specifics:**
+
+'self.create_timer(1.0, self.publish_signal)' : Tells the node to call publish_signal() every second.
+'self.counter' : Tracks the number of seconds passed.
 
 if self.counter < 10:
 Send "green" for first 10 seconds.
 
-elif self.counter < 20:
+elseif self.counter < 20:
 Then send "red" for the next 10 seconds.
 
-rclpy.shutdown()
-Stops the node after 20 seconds.
+'rclpy.shutdown()' : Stops the node after 20 seconds.
 
-q2_signal_2.py Specifics:
-self.create_subscription(String, '/s1', self.listener_callback, 10)
-Subscribes to topic /s1, and runs listener_callback() every time a new message comes.
 
-if msg.data == 'green': response_msg.data = 'red'
-Opposite logic: if signal 1 is "green", signal 2 becomes "red".
+**'q2_signal_2.py' Specifics:**
 
-self.publisher_.publish(response_msg)
-Sends the determined message to /s2.
+'self.create_subscription(String, '/s1', self.listener_callback, 10)' :  Subscribes to topic /s1, and runs listener_callback() every time a new message comes.
 
-get_logger().info(...)
-Helps in printing the interactions in the terminal for debugging.
+if msg.data == 'green'
+then response_msg.data = 'red'
+
+*Opposite logic: if signal 1 is "green", signal 2 becomes "red"*
+
+'self.publisher_.publish(response_msg)' : Sends the determined message to /s2.
+
+'get_logger().info(...)' : Helps in printing the interactions in the terminal for debugging.
+
+
+
+
+
+
+
+
+
+
+## Question 3: Custom Message Publishing from Mars Rover
+
+
+**Task**
+> A Mars rover must broadcast multiple pieces of status information through a single custom message on a topic.
+> The message should include:
+-Velocity (linear + angular) → geometry_msgs/Twist
+-Distance travelled → float64
+-Coordinates → geometry_msgs/Pose
+-Battery level → float32
+-Time of travel → builtin_interfaces/Duration
+
+
+
+## Files
+
+ 
+'msg/RoverStatus.msg' : Defines a custom message format that combines all required fields: velocity, position, distance, battery, and time.
+'scripts/q3_rover_status_publisher.py' : A Python ROS 2 node that simulates a Mars rover and publishes its status every 1 second using the custom message.
+
+##What We Did
+
+-We designed a custom message, so that all necessary rover data is packed into one structured message.
+
+-Created a .msg file with fields of existing types (like Twist, Pose) along with basic types like float64 and float32.
+
+-We then created a publisher node that simulates:
+Constant velocity
+Incrementing distance and time
+Static coordinates (with x = distance, y = 2.0)
+A fixed battery level (e.g., 75%)
+
+- This node publishes a new status message every second on topic /rover/status.
+
+"Imagine it as a black box telemetry module on the rover — every second, it reports back its "health and location"."
+
+
+
+## Understanding the Custom Message
+
+Inside msg/RoverStatus.msg, we define the following:
+
+geometry_msgs/Twist velocity
+float64 distance_traveled
+geometry_msgs/Pose position
+float32 battery_level
+builtin_interfaces/Duration time_traveled
+
+> Each of these fields allows us to re-use existing ROS message types (like Twist, Pose, Duration) to represent complex data like vectors, positions, and timestamps — while also adding simpler float fields like distance and battery.
+
+
+
+## Code Explanations
+
+
+'q3_rover_status_publisher.py' : imports:
+
+from 'kratos_isha.msg import RoverStatus' :
+imports the custom message we defined in msg/RoverStatus.msg.
+
+
+> Publisher creation:
+'self.publisher_ = self.create_publisher(RoverStatus, '/rover/status', 10)' : Creates a publisher that sends RoverStatus messages to the topic /rover/status with a queue size of 10.
+
+> Timer:
+'self.timer = self.create_timer(1.0, self.timer_callback)' : Calls the timer_callback() function every 1 second — this is where we publish the message.
+
+
+> Simulated data:
+
+self.distance = 0.0
+self.time_elapsed = 0.0
+
+-We initialize dummy values to simulate the rover's behavior over time.
+
+'
+In 'timer_callback()' -
+msg.velocity.linear.x = 1.5
+msg.velocity.angular.z = 0.3
+
+-We simulate constant forward linear velocity and a slight angular rotation.
+
+
+self.distance += 1.5
+msg.distance_traveled = self.distance
+
+-Pretend the rover travels 1.5 meters every second.
+
+
+msg.position.position.x = self.distance
+msg.position.position.y = 2.0
+
+-We hard-code the position's y coordinate, and use distance for x to simulate forward motion.
+
+'
+msg.battery_level = 75.0
+-We assume the battery is at 75% for simplicity.
+
+
+self.time_elapsed += 1.0
+msg.time_traveled.sec = int(self.time_elapsed)
+-We track how long the rover has been "traveling" and convert it to Duration.
+
+
+Final publishing step:
+self.publisher_.publish(msg)
+-Sends the message out on /rover/status.
+
+self.get_logger().info(f'Publishing RoverStatus: [distance={msg.distance_traveled}, battery={msg.battery_level}, time={msg.time_traveled}]')
+-Prints the info to terminal so we know it's working.
+
+
+
+'
+'from geometry_msgs.msg import Twist, Pose' -	Reusing existing ROS 2 messages for velocity and coordinates
+'from kratos_isha.msg import RoverStatus' - Importing our own custom message type
+'self.create_timer(1.0, self.timer_callback)' -	Schedule timer_callback() to run every second
+'msg.velocity.linear.x = 1.5' -	Set constant linear velocity in X direction
+'self.distance += 1.5'	- Simulating distance as speed × time
+'msg.coordinates.position.x = self.distance' -	Updating position to reflect distance traveled
+'rclpy.shutdown()' - Properly shuts down the node when done
+
+
+#Field          	#Dummy Value    	# Why?
+velocity.linear.x	1.5 m/s	             Simulates forward motion
+velocity.angular.z	0.3 rad/s          	 Simulates light turning
+distance	        0.0 → +1.5/s	     Matches linear velocity
+battery	            75.0%	             Fixed to simulate moderate charge
+time_elapsed	    0.0 → +1/s	         Tracks how long the rover’s been moving
+coordinates.x	    =  distance	         Keeps spatial logic simple
 
