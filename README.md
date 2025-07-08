@@ -56,7 +56,7 @@ Subscriber: `self.create_subscription(String, 'new', self.listener_callback, 10)
 ##"Build Instructions" (chatgpt kare the ye tbh)
 
 Make sure you are in your ROS 2 workspace:
-```bash
+
 cd ~/ros2_ws
 colcon build
 source install/setup.bash
